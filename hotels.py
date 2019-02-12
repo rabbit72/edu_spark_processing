@@ -17,7 +17,7 @@ def get_popular_hotels_between_couples(data_frame, limit=3):
 
 
 def main():
-    booking_data_frame = get_booking_data_frame("./train.csv")
+    booking_data_frame = get_booking_data_frame("./data/train.csv")
     between_couples = get_popular_hotels_between_couples(booking_data_frame)
     between_couples.show()
 
