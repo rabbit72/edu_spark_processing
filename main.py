@@ -80,7 +80,6 @@ def main():
         manager = "local[*]"
 
     session = get_spark_session(cluster_manager=manager)
-    session.sparkContext.setLogLevel('WARN')
     booking_data_frame = get_booking_data_frame(csv_file, session)
 
     methods = {
