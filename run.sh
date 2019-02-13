@@ -1,3 +1,3 @@
 #!/bin/sh
 
-spark-submit main.py $1 $2
+spark-submit --master yarn main.py $1
