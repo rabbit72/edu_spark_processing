@@ -1,4 +1,4 @@
-from hotels import get_booking_data_frame, get_spark_session
+from hotels import read_data_frame_from_csv, get_spark_session
 from pyspark.sql.functions import col
 import sys
 
@@ -73,7 +73,7 @@ def main():
         exit("Input file name as first argument")
 
     session = get_spark_session()
-    booking_data_frame = get_booking_data_frame(csv_file, session)
+    booking_data_frame = read_data_frame_from_csv(csv_file, session)
 
     methods = {
         "couples": get_booked_couples_hotels,

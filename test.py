@@ -1,6 +1,6 @@
 import pytest
 import main
-from hotels.core import get_booking_data_frame, get_spark_session
+from hotels.core import read_data_frame_from_csv, get_spark_session
 from pyspark.sql import Row
 from pyspark.sql.utils import AnalysisException
 
@@ -9,7 +9,7 @@ from pyspark.sql.utils import AnalysisException
 def data_frame():
     small_data_frame = "./tests/test_train.csv"
     test_session = get_spark_session()
-    return get_booking_data_frame(small_data_frame, test_session)
+    return read_data_frame_from_csv(small_data_frame, test_session)
 
 
 @pytest.fixture()
@@ -52,11 +52,11 @@ def test_searched_hotels_with_children_not_booked(data_frame):
 
 def test_get_booking_data_frame_value_error(spark_session):
     with pytest.raises(ValueError):
-        get_booking_data_frame(
+        read_data_frame_from_csv(
             "./tests/test_train.csv", spark_session, file_system="error"
         )
 
 
 def test_get_booking_data_frame_not_found(spark_session):
     with pytest.raises(AnalysisException):
-        get_booking_data_frame("./tests/test_train.cs", spark_session)
+        read_data_frame_from_csv("./tests/test_train.cs", spark_session)

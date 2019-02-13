@@ -4,7 +4,7 @@ from hotels.errors import ClusterError, HdfsError
 from hotels.booking_schema import booking_schema
 
 
-def get_booking_data_frame(file_name, spark_session, file_system="local"):
+def read_data_frame_from_csv(file_name, spark_session, file_system="local"):
     """
    Read .csv file with bookings from local or hdfs file system and convert to data frame
 
