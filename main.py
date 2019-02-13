@@ -1,4 +1,4 @@
-from hotels import get_booking_data_frame
+from hotels import get_booking_data_frame, get_spark_session
 from pyspark.sql.functions import col
 
 
@@ -52,7 +52,8 @@ def get_searched_hotels_with_children_not_booked(data_frame, limit=3):
 
 
 def main():
-    booking_data_frame = get_booking_data_frame("./data/train.csv")
+    session = get_spark_session()
+    booking_data_frame = get_booking_data_frame("./data/train.csv", session)
     between_couples = get_booked_couples_hotels(booking_data_frame)
     between_couples.show()
 

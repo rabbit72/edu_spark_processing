@@ -1,1 +1,1 @@
-from .core import get_booking_data_frame
+from .core import get_booking_data_frame, get_spark_session

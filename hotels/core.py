@@ -5,17 +5,16 @@ from hotels.errors import ClusterError, HdfsError
 from hotels.booking_schema import booking_schema
 
 
-def get_booking_data_frame(file_name, file_system="local", cluster_manager="local"):
+def get_booking_data_frame(file_name, spark_session, file_system="local"):
     """
    Read .csv file with bookings from local or hdfs file system and convert to data frame
 
    :param str file_name: The person sending the message
    :param str file_system: Where will be searching the file, can be "local" or "hdfs"
-   :param str cluster_manager: Which manager will be used, can be "local" or "yarn"
+   :param SparkSession spark_session: Spark session
    :return: Booked and searched hotels
    :rtype: DataFrame
    :raises ValueError: if wrong params
-   :raises ClusterError: some error with manager
    :raises FileNotFoundError: if file does not exist
    """
 
@@ -26,6 +25,29 @@ def get_booking_data_frame(file_name, file_system="local", cluster_manager="loca
         pass
     else:
         raise ValueError("Wrong file_system, can be 'local' or 'hdfs'")
+
+    # convert csv to data frame
+    try:
+        booking_data = spark_session.read.csv(
+            file_name, header=True, schema=booking_schema, sep=","
+        )
+    except AnalysisException as error:
+        raise FileNotFoundError("Path does not exist") from error
+    except Py4JJavaError as error:
+        raise HdfsError("Check HDFS file system") from error
+
+    return booking_data
+
+
+def get_spark_session(cluster_manager="local[*]"):
+    """
+       Return spark session object
+
+       :param str cluster_manager: Which manager will be used("local[*]"/"local"/"yarn")
+       :return: Return spark session object
+       :rtype: SparkSession
+       :raises ClusterError: some error with manager
+       """
 
     # get spark session object
     try:
@@ -40,14 +62,4 @@ def get_booking_data_frame(file_name, file_system="local", cluster_manager="loca
             "env variables HADOOP_CONF_DIR and YARN_CONF_DIR"
         ) from error
 
-    # convert csv to data frame
-    try:
-        booking_data = spark.read.csv(
-            file_name, header=True, schema=booking_schema, sep=","
-        )
-    except AnalysisException as error:
-        raise FileNotFoundError("Path does not exist") from error
-    except Py4JJavaError as error:
-        raise HdfsError("Check HDFS file system") from error
-
-    return booking_data
+    return spark
