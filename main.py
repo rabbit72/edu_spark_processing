@@ -36,6 +36,7 @@ def get_searched_booked_hotels_from_same_country(data_frame, limit=1):
     data_frame_result = (
         data_frame.select(cols)
         .filter(data_frame.user_location_country == data_frame.hotel_country)
+        .filter(data_frame.is_booking == 1)
         .groupBy(cols)
         .count()
         .orderBy(col("count").desc())

@@ -28,7 +28,7 @@ def test_booked_couples_hotels(data_frame):
 
 
 def test_searched_booked_hotels_from_same_country(data_frame):
-    right_answer = [Row(hotel_country=50, user_location_country=50, count=6)]
+    right_answer = [Row(hotel_country=66, user_location_country=66, count=3)]
 
     result = main.get_searched_booked_hotels_from_same_country(data_frame)
     rows = result.collect()
