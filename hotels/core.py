@@ -32,9 +32,9 @@ def get_booking_data_frame(file_name, spark_session, file_system="local"):
             file_name, header=True, schema=booking_schema, sep=","
         )
     except AnalysisException as error:
-        raise FileNotFoundError("Path does not exist") from error
+        raise FileNotFoundError("Path does not exist")
     except Py4JJavaError as error:
-        raise HdfsError("Check HDFS file system") from error
+        raise HdfsError("Check HDFS file system")
 
     return booking_data
 
@@ -60,6 +60,6 @@ def get_spark_session(cluster_manager="local[*]"):
         raise ClusterError(
             "Check cluster_manager argument or "
             "env variables HADOOP_CONF_DIR and YARN_CONF_DIR"
-        ) from error
+        )
 
     return spark

@@ -1,7 +1,10 @@
-class ClusterError(Exception):...
+class ClusterError(Exception):
+    pass
 
 
-class YarnError(ClusterError):...
+class YarnError(ClusterError):
+    pass
 
 
-class HdfsError(Exception): ...
+class HdfsError(Exception):
+    pass
