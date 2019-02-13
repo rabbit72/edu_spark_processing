@@ -1,5 +1,6 @@
 from hotels import get_booking_data_frame, get_spark_session
 from pyspark.sql.functions import col
+import click
 
 
 def get_booked_couples_hotels(data_frame, limit=3):
@@ -10,7 +11,6 @@ def get_booked_couples_hotels(data_frame, limit=3):
    :param int limit: How many top hotels
    :return: Popular hotels between couples
    :rtype: DataFrame
-   :raises ValueError: if wrong params # TODO raise exception when wrong data frame
    """
     cols = ["hotel_continent", "hotel_country", "hotel_market"]
     for_couples = (
@@ -33,7 +33,6 @@ def get_searched_booked_hotels_from_same_country(data_frame, limit=1):
    :param int limit: How many top hotels
    :return: Popular hotels
    :rtype: DataFrame
-   :raises ValueError: if wrong params # TODO raise exception when wrong data frame
    """
     cols = ["hotel_country", "user_location_country"]
     data_frame_result = (
@@ -55,7 +54,6 @@ def get_searched_hotels_with_children_not_booked(data_frame, limit=3):
    :param int limit: How many top hotels
    :return: Popular hotels
    :rtype: DataFrame
-   :raises ValueError: if wrong params # TODO raise exception when wrong data frame
    """
     cols = ["hotel_continent", "hotel_country", "hotel_market"]
     data_frame_result = (
@@ -70,11 +68,37 @@ def get_searched_hotels_with_children_not_booked(data_frame, limit=3):
     return data_frame_result.limit(limit)
 
 
-def main():
-    session = get_spark_session()
-    booking_data_frame = get_booking_data_frame("./data/train.csv", session)
-    between_couples = get_booked_couples_hotels(booking_data_frame)
-    between_couples.show()
+@click.command()
+@click.argument("csv_file")
+@click.option(
+    "--manager", "-m", type=click.Choice(["local[*]", "yarn"]), default="local[*]"
+)
+@click.option(
+    "--file_system", "-fs", type=click.Choice(["local", "hdfs"]), default="local"
+)
+@click.option(
+    "--query",
+    "-q",
+    type=click.Choice(["all", "couples", "country", "children"]),
+    default="all",
+)
+def main(csv_file, manager, file_system, query):
+    session = get_spark_session(cluster_manager=manager)
+    booking_data_frame = get_booking_data_frame(
+        csv_file, session, file_system=file_system
+    )
+
+    methods = {
+        "couples": get_booked_couples_hotels,
+        "country": get_searched_booked_hotels_from_same_country,
+        "children": get_searched_hotels_with_children_not_booked
+    }
+    if query == "all":
+        for method in methods.values():
+            result = method(booking_data_frame)
+            result.show()
+    else:
+        methods[query](booking_data_frame).show()
 
 
 if __name__ == "__main__":
