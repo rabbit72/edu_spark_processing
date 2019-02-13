@@ -15,8 +15,6 @@ def get_booked_couples_hotels(data_frame, limit=3):
     cols = ["hotel_continent", "hotel_country", "hotel_market"]
     for_couples = (
         data_frame.select(cols)
-        .filter(data_frame.is_booking == 1)
-        .filter(data_frame.srch_children_cnt == 0)
         .filter(data_frame.srch_adults_cnt == 2)
         .groupBy(cols)
         .count()

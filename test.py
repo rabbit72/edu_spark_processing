@@ -18,7 +18,7 @@ def spark_session():
 
 
 def test_booked_couples_hotels(data_frame):
-    right_answer = [Row(hotel_continent=2, hotel_country=66, hotel_market=628, count=3)]
+    right_answer = [Row(hotel_continent=2, hotel_country=50, hotel_market=1457, count=6)]
 
     result = main.get_booked_couples_hotels(data_frame, limit=1)
     rows = result.collect()
