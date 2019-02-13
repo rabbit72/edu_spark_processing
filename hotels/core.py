@@ -1,5 +1,4 @@
 from pyspark.sql import SparkSession
-from pyspark.sql.utils import AnalysisException
 from py4j.protocol import Py4JJavaError
 from hotels.errors import ClusterError, HdfsError
 from hotels.booking_schema import booking_schema
@@ -31,8 +30,6 @@ def get_booking_data_frame(file_name, spark_session, file_system="local"):
         booking_data = spark_session.read.csv(
             file_name, header=True, schema=booking_schema, sep=","
         )
-    except AnalysisException as error:
-        raise FileNotFoundError("Path does not exist")
     except Py4JJavaError as error:
         raise HdfsError("Check HDFS file system")
 
