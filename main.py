@@ -74,12 +74,7 @@ def main():
     except IndexError:
         exit("Input file name as first argument")
 
-    try:
-        manager = sys.argv[2]
-    except IndexError:
-        manager = "local[*]"
-
-    session = get_spark_session(cluster_manager=manager)
+    session = get_spark_session()
     booking_data_frame = get_booking_data_frame(csv_file, session)
 
     methods = {

@@ -36,11 +36,10 @@ def get_booking_data_frame(file_name, spark_session, file_system="local"):
     return booking_data
 
 
-def get_spark_session(cluster_manager="local[*]"):
+def get_spark_session():
     """
        Return spark session object
 
-       :param str cluster_manager: Which manager will be used("local[*]"/"local"/"yarn")
        :return: Return spark session object
        :rtype: SparkSession
        :raises ClusterError: some error with manager
@@ -50,7 +49,6 @@ def get_spark_session(cluster_manager="local[*]"):
     try:
         spark = (
             SparkSession.builder.appName("booking")
-            .master(cluster_manager)
             .getOrCreate()
         )
     except Exception as error:
