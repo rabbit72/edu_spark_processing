@@ -2,6 +2,7 @@ import pytest
 import main
 from hotels.core import get_booking_data_frame, get_spark_session
 from pyspark.sql import Row
+from pyspark.sql.utils import AnalysisException
 
 
 @pytest.fixture()
@@ -23,10 +24,7 @@ def test_booked_couples_hotels(data_frame):
     rows = result.collect()
 
     for row, right_row in zip(rows, right_answer):
-        assert row["count"] == right_row["count"]
-        assert row["hotel_continent"] == right_row["hotel_continent"]
-        assert row["hotel_country"] == right_row["hotel_country"]
-        assert row["hotel_market"] == right_row["hotel_market"]
+        assert row.asDict() == right_row.asDict()
 
 
 def test_searched_booked_hotels_from_same_country(data_frame):
@@ -36,9 +34,7 @@ def test_searched_booked_hotels_from_same_country(data_frame):
     rows = result.collect()
 
     for row, right_row in zip(rows, right_answer):
-        assert row["count"] == right_row["count"]
-        assert row["hotel_country"] == right_row["hotel_country"]
-        assert row["user_location_country"] == right_row["user_location_country"]
+        assert row.asDict() == right_row.asDict()
 
 
 def test_searched_hotels_with_children_not_booked(data_frame):
@@ -51,10 +47,7 @@ def test_searched_hotels_with_children_not_booked(data_frame):
     rows = result.collect()
 
     for row, right_row in zip(rows, right_answer):
-        assert row["count"] == right_row["count"]
-        assert row["hotel_continent"] == right_row["hotel_continent"]
-        assert row["hotel_country"] == right_row["hotel_country"]
-        assert row["hotel_market"] == right_row["hotel_market"]
+        assert row.asDict() == right_row.asDict()
 
 
 def test_get_booking_data_frame_value_error(spark_session):
@@ -65,5 +58,5 @@ def test_get_booking_data_frame_value_error(spark_session):
 
 
 def test_get_booking_data_frame_not_found(spark_session):
-    with pytest.raises(FileNotFoundError):
+    with pytest.raises(AnalysisException):
         get_booking_data_frame("./tests/test_train.cs", spark_session)
