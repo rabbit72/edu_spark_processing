@@ -6,7 +6,7 @@ def read_data_frame_from_csv(
     file_name, spark_session, file_system="local", schema=None
 ):
     """
-   Read .csv file with bookings from local or hdfs file system and convert to data frame
+   Read .csv file from local or hdfs file system and convert to data frame
 
    :param str file_name: The person sending the message
    :param str file_system: Where will be searching the file, can be "local" or "hdfs"
