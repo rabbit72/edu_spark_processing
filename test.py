@@ -9,7 +9,9 @@ from pyspark.sql.utils import AnalysisException
 @pytest.fixture()
 def data_frame(spark_session):
     small_data_frame = "./tests/test_train.csv"
-    return read_data_frame_from_csv(small_data_frame, spark_session, schema=booking_schema)
+    return read_data_frame_from_csv(
+        small_data_frame, spark_session, schema=booking_schema
+    )
 
 
 @pytest.fixture()
@@ -18,7 +20,9 @@ def spark_session():
 
 
 def test_booked_couples_hotels(data_frame):
-    right_answer = [Row(hotel_continent=2, hotel_country=50, hotel_market=1457, count=6)]
+    right_answer = [
+        Row(hotel_continent=2, hotel_country=50, hotel_market=1457, count=6)
+    ]
 
     result = main.get_booked_couples_hotels(data_frame, limit=1)
     rows = result.collect()

@@ -3,10 +3,7 @@ from py4j.protocol import Py4JJavaError
 
 
 def read_data_frame_from_csv(
-        file_name,
-        spark_session,
-        file_system="local",
-        schema=None
+    file_name, spark_session, file_system="local", schema=None
 ):
     """
    Read .csv file with bookings from local or hdfs file system and convert to data frame
