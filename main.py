@@ -47,14 +47,15 @@ def get_booked_couples_hotels(data_frame, limit=3):
    :rtype: DataFrame
    """
     cols = ["hotel_continent", "hotel_country", "hotel_market"]
-    for_couples = (
+    return (
         data_frame.select(cols)
         .filter(data_frame.srch_adults_cnt == 2)
         .groupBy(cols)
         .count()
         .orderBy(col("count").desc())
+        .limit(limit)
+        .coalesce(1)
     )
-    return for_couples.limit(limit)
 
 
 def get_searched_booked_hotels_from_same_country(data_frame, limit=1):
@@ -67,16 +68,16 @@ def get_searched_booked_hotels_from_same_country(data_frame, limit=1):
    :rtype: DataFrame
    """
     cols = ["hotel_country", "user_location_country"]
-    data_frame_result = (
+    return (
         data_frame.select(cols)
         .filter(data_frame.user_location_country == data_frame.hotel_country)
         .filter(data_frame.is_booking == 1)
         .groupBy(cols)
         .count()
         .orderBy(col("count").desc())
+        .limit(limit)
+        .coalesce(1)
     )
-
-    return data_frame_result.limit(limit)
 
 
 def get_searched_hotels_with_children_not_booked(data_frame, limit=3):
@@ -89,16 +90,16 @@ def get_searched_hotels_with_children_not_booked(data_frame, limit=3):
    :rtype: DataFrame
    """
     cols = ["hotel_continent", "hotel_country", "hotel_market"]
-    data_frame_result = (
+    return (
         data_frame.select(cols)
         .filter(data_frame.srch_children_cnt > 0)
         .filter(data_frame.is_booking == 0)
         .groupBy(cols)
         .count()
         .orderBy(col("count").desc())
+        .limit(limit)
+        .coalesce(1)
     )
-
-    return data_frame_result.limit(limit)
 
 
 def main():
@@ -121,14 +122,12 @@ def main():
         schema=booking_schema
     )
 
-    methods = {
-        "couples": get_booked_couples_hotels,
-        "country": get_searched_booked_hotels_from_same_country,
-        "children": get_searched_hotels_with_children_not_booked,
-    }
-    for method in methods.values():
-        result = method(booking_data_frame)
-        result.show()
+    couples = get_booked_couples_hotels(booking_data_frame)
+    country = get_searched_booked_hotels_from_same_country(booking_data_frame)
+    children = get_searched_hotels_with_children_not_booked(booking_data_frame)
+    couples.show()
+    country.show()
+    children.show()
 
 
 if __name__ == "__main__":
