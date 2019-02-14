@@ -1,7 +1,6 @@
-from pyspark.sql import SparkSession
-from py4j.protocol import Py4JJavaError
-from hotels.errors import ClusterError, HdfsError
 from hotels.booking_schema import booking_schema
+from hotels.errors import HdfsError
+from py4j.protocol import Py4JJavaError
 
 
 def read_data_frame_from_csv(file_name, spark_session, file_system="local"):
@@ -34,27 +33,3 @@ def read_data_frame_from_csv(file_name, spark_session, file_system="local"):
         raise HdfsError("Check HDFS file system")
 
     return booking_data
-
-
-def get_spark_session():
-    """
-       Return spark session object
-
-       :return: Return spark session object
-       :rtype: SparkSession
-       :raises ClusterError: some error with manager
-       """
-
-    # get spark session object
-    try:
-        spark = (
-            SparkSession.builder.appName("booking")
-            .getOrCreate()
-        )
-    except Exception as error:
-        raise ClusterError(
-            "Check cluster_manager argument or "
-            "env variables HADOOP_CONF_DIR and YARN_CONF_DIR"
-        )
-
-    return spark

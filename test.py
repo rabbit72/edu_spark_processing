@@ -1,20 +1,19 @@
-import pytest
 import main
-from hotels.core import read_data_frame_from_csv, get_spark_session
-from pyspark.sql import Row
+import pytest
+from hotels.core import read_data_frame_from_csv
+from pyspark.sql import Row, SparkSession
 from pyspark.sql.utils import AnalysisException
 
 
 @pytest.fixture()
-def data_frame():
+def data_frame(spark_session):
     small_data_frame = "./tests/test_train.csv"
-    test_session = get_spark_session()
-    return read_data_frame_from_csv(small_data_frame, test_session)
+    return read_data_frame_from_csv(small_data_frame, spark_session)
 
 
 @pytest.fixture()
 def spark_session():
-    return get_spark_session()
+    return SparkSession.builder.appName("booking").getOrCreate()
 
 
 def test_booked_couples_hotels(data_frame):

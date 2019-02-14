@@ -1,6 +1,9 @@
-from hotels import read_data_frame_from_csv, get_spark_session
-from pyspark.sql.functions import col
 import sys
+
+from hotels import read_data_frame_from_csv
+from hotels.errors import ClusterError
+from pyspark.sql import SparkSession
+from pyspark.sql.functions import col
 
 
 def get_booked_couples_hotels(data_frame, limit=3):
@@ -73,7 +76,14 @@ def main():
     except IndexError:
         exit("Input file name as first argument")
 
-    session = get_spark_session()
+    try:
+        session = SparkSession.builder.appName("booking").getOrCreate()
+    except Exception as error:
+        raise ClusterError(
+            "Check cluster_manager argument or "
+            "env variables HADOOP_CONF_DIR and YARN_CONF_DIR"
+        )
+
     booking_data_frame = read_data_frame_from_csv(csv_file, session)
 
     methods = {
