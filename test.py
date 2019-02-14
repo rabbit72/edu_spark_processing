@@ -1,6 +1,7 @@
 import main
 import pytest
 from hotels.core import read_data_frame_from_csv
+from main import booking_schema
 from pyspark.sql import Row, SparkSession
 from pyspark.sql.utils import AnalysisException
 
@@ -8,7 +9,7 @@ from pyspark.sql.utils import AnalysisException
 @pytest.fixture()
 def data_frame(spark_session):
     small_data_frame = "./tests/test_train.csv"
-    return read_data_frame_from_csv(small_data_frame, spark_session)
+    return read_data_frame_from_csv(small_data_frame, spark_session, schema=booking_schema)
 
 
 @pytest.fixture()

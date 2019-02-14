@@ -4,6 +4,37 @@ from hotels import read_data_frame_from_csv
 from hotels.errors import ClusterError
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import col
+from pyspark.sql.types import (ByteType, DoubleType, IntegerType, LongType,
+                               StringType, StructField, StructType)
+
+booking_schema = StructType(
+        [
+            StructField("date_time", StringType()),
+            StructField("site_name", IntegerType()),
+            StructField("posa_continent", IntegerType()),
+            StructField("user_location_country", IntegerType()),
+            StructField("user_location_region", IntegerType()),
+            StructField("user_location_city", IntegerType()),
+            StructField("orig_destination_distance", DoubleType()),
+            StructField("user_id", IntegerType()),
+            StructField("is_mobile", ByteType()),
+            StructField("is_package", IntegerType()),
+            StructField("channel", IntegerType()),
+            StructField("srch_ci", StringType()),
+            StructField("srch_co", StringType()),
+            StructField("srch_adults_cnt", StringType()),
+            StructField("srch_children_cnt", IntegerType()),
+            StructField("srch_rm_cnt", IntegerType()),
+            StructField("srch_destination_id", IntegerType()),
+            StructField("srch_destination_type_id", IntegerType()),
+            StructField("is_booking", ByteType()),
+            StructField("cnt", LongType()),
+            StructField("hotel_continent", IntegerType()),
+            StructField("hotel_country", IntegerType()),
+            StructField("hotel_market", IntegerType()),
+            StructField("hotel_cluster", IntegerType()),
+        ]
+    )
 
 
 def get_booked_couples_hotels(data_frame, limit=3):
@@ -84,7 +115,11 @@ def main():
             "env variables HADOOP_CONF_DIR and YARN_CONF_DIR"
         )
 
-    booking_data_frame = read_data_frame_from_csv(csv_file, session)
+    booking_data_frame = read_data_frame_from_csv(
+        csv_file,
+        session,
+        schema=booking_schema
+    )
 
     methods = {
         "couples": get_booked_couples_hotels,
